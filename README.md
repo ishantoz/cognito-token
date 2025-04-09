@@ -1,4 +1,4 @@
-# Cognito Token Verifier
+# Cognito Token
 
 A PHP library for verifying AWS Cognito JWT tokens (ID tokens and Access tokens).
 
@@ -15,7 +15,7 @@ The `CognitoTokenVerifier` class provides functionality to verify JSON Web Token
 ## Installation
 
 ```bash
-composer require gdsso/cognito-token-verifier
+composer require ishanto/cognito-token
 ```
 
 ## Requirements
