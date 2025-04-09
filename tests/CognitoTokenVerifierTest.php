@@ -1,8 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use GDSSO\Tokens\CognitoTokenVerifier;
-use GDSSO\Tokens\Exception\CognitoTokenException;
+use IShanto\Cognito\Tokens\CognitoTokenVerifier;
+use IShanto\Cognito\Tokens\Exception\CognitoTokenException;
 
 class CognitoTokenVerifierTest extends TestCase
 {

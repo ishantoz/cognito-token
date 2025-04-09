@@ -1,6 +1,6 @@
 {
-  "name": "gd-sso/tokens",
-  "description": "Lightweight JWT token management for GD SSO system.",
+  "name": "ishanto/cognito-token",
+  "description": "Lightweight JWT token management for cognito.",
   "type": "library",
   "version": "1.0.0-beta",
   "license": "MIT",
@@ -13,7 +13,7 @@
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/your-username/your-repository"
+      "url": "https://github.com/ishantoz/cognito-token"
     }
   ],
   "require": {
@@ -22,7 +22,7 @@
   },
   "autoload": {
     "psr-4": {
-      "GDSSO\\Tokens\\": "src/"
+      "IShanto\\Cognito\\Tokens\\": "src/"
     }
   },
   "extra": {

@@ -33,7 +33,7 @@ You have two options for implementing token verification in your application:
 The simplest approach is to use this library as-is, which provides a complete solution for Cognito token verification.
 
 ```php
-use GDSSO\Tokens\CognitoTokenVerifier;
+use IShanto\Cognito\Tokens\CognitoTokenVerifier;
 
 $verifier = new CognitoTokenVerifier(
     'us-east-1',              // AWS region
@@ -57,8 +57,8 @@ This approach gives you more control but requires deeper understanding of JWT ve
 ## Basic Usage
 
 ```php
-use GDSSO\Tokens\CognitoTokenVerifier;
-use GDSSO\Tokens\Exception\CognitoTokenException;
+use IShanto\Cognito\Tokens\CognitoTokenVerifier;
+use IShanto\Cognito\Tokens\Exception\CognitoTokenException;
 
 // Initialize the verifier
 $verifier = new CognitoTokenVerifier(
@@ -91,7 +91,7 @@ try {
 The library supports caching of JWKS (JSON Web Key Sets) to improve performance. By default, it uses a no-cache implementation, but you can provide your own cache implementation:
 
 ```php
-use GDSSO\Tokens\CognitoTokenVerifier;
+use IShanto\Cognito\Tokens\CognitoTokenVerifier;
 use YourNamespace\YourCacheImplementation;
 
 // Create your cache implementation that implements CacheInterface
@@ -113,7 +113,7 @@ Create a class that implements the `CacheInterface`:
 ```php
 namespace YourNamespace;
 
-use GDSSO\Tokens\CacheInterface;
+use IShanto\Cognito\Tokens\CacheInterface;
 
 class YourCacheImplementation implements CacheInterface
 {
@@ -143,9 +143,9 @@ For Laravel users, a ready-to-use cache implementation is included with the libr
 ```php
 <?php
 
-namespace GDSSO\Tokens;
+namespace IShanto\Cognito\Tokens;
 
-use GDSSO\Tokens\CacheInterface;
+use IShanto\Cognito\Tokens\CacheInterface;
 use Illuminate\Support\Facades\Cache;
 
 class LaravelCache implements CacheInterface
@@ -170,8 +170,8 @@ class LaravelCache implements CacheInterface
 Usage with Laravel:
 
 ```php
-use GDSSO\Tokens\CognitoTokenVerifier;
-use GDSSO\Tokens\LaravelCache;
+use IShanto\Cognito\Tokens\CognitoTokenVerifier;
+use IShanto\Cognito\Tokens\LaravelCache;
 
 // Initialize the verifier with Laravel cache
 $verifier = new CognitoTokenVerifier(
@@ -204,8 +204,8 @@ The library throws `CognitoTokenException` with specific error codes:
 Example error handling:
 
 ```php
-use GDSSO\Tokens\CognitoTokenVerifier;
-use GDSSO\Tokens\Exception\CognitoTokenException;
+use IShanto\Cognito\Tokens\CognitoTokenVerifier;
+use IShanto\Cognito\Tokens\Exception\CognitoTokenException;
 
 try {
     $payload = $verifier->verifyIdToken($token);

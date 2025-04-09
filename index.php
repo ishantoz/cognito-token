@@ -1,7 +1,7 @@
 <?php
 
-use GDSSO\Tokens\CognitoTokenVerifier;
-use GDSSO\Tokens\Exception\CognitoTokenException;
+use IShanto\Cognito\Tokens\CognitoTokenVerifier;
+use IShanto\Cognito\Tokens\Exception\CognitoTokenException;
 use Dotenv\Dotenv;
 use Symfony\Component\VarDumper\VarDumper;
 

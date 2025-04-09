@@ -1,6 +1,6 @@
 <?php
 
-namespace GDSSO\Tokens;
+namespace IShanto\Cognito\Tokens;
 
 class NoCache implements CacheInterface
 {

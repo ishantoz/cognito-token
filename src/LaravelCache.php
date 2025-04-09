@@ -1,8 +1,8 @@
 <?php
 
-namespace GDSSO\Tokens;
+namespace IShanto\Cognito\Tokens;
 
-use GDSSO\Tokens\CacheInterface;
+use IShanto\Cognito\Tokens\CacheInterface;
 use Illuminate\Support\Facades\Cache;
 
 class LaravelCache implements CacheInterface

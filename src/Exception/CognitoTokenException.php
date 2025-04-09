@@ -1,6 +1,6 @@
 <?php
 
-namespace GDSSO\Tokens\Exception;
+namespace IShanto\Cognito\Tokens\Exception;
 
 use Exception;
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace GDSSO\Tokens;
+namespace IShanto\Cognito\Tokens;
 
 use Exception;
-use GDSSO\Tokens\Exception\CognitoTokenException;
-use GDSSO\Tokens\CacheInterface;
-use GDSSO\Tokens\NoCache;
+use IShanto\Cognito\Tokens\Exception\CognitoTokenException;
+use IShanto\Cognito\Tokens\CacheInterface;
+use IShanto\Cognito\Tokens\NoCache;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\Signature\Algorithm\RS256;
 use Jose\Component\Signature\JWSVerifier;
