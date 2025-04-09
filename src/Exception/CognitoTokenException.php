@@ -13,11 +13,12 @@ class CognitoTokenException extends Exception
     public const NO_JWK_FOR_KID                = 1004;
     public const SIGNATURE_VERIFICATION_FAILED = 1005;
     public const TOKEN_PAYLOAD_DECODING_FAILED = 1006;
-    public const INVALID_ISSUER                = 1007;
-    public const TOKEN_EXPIRED                 = 1008;
-    public const INVALID_AUDIENCE              = 1009;
-    public const MISSING_SUBJECT               = 1010;
-    public const INVALID_CLIENT_ID_ACCESS      = 1011;
+    public const INVALID_TOKEN                 = 1007;
+    public const INVALID_ISSUER                = 1008;
+    public const TOKEN_EXPIRED                 = 1009;
+    public const INVALID_AUDIENCE              = 1010;
+    public const MISSING_SUBJECT               = 1011;
+    public const INVALID_CLIENT_ID_ACCESS      = 1012;
 
     public function __construct(string $message, int $code)
     {

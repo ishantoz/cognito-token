@@ -24,6 +24,36 @@ composer require gdsso/cognito-token-verifier
 - `web-token/jwt-signature` package
 - `web-token/jwt-core` package
 
+## Implementation Options
+
+You have two options for implementing token verification in your application:
+
+### Option 1: Use this library directly
+
+The simplest approach is to use this library as-is, which provides a complete solution for Cognito token verification.
+
+```php
+use GDSSO\Tokens\CognitoTokenVerifier;
+
+$verifier = new CognitoTokenVerifier(
+    'us-east-1',              // AWS region
+    'us-east-1_aQRUYfYJQ',    // Cognito User Pool ID
+    '6c9hs2p1v53bf9ol5m0o0rlfjj'  // Cognito Client ID
+);
+
+$payload = $verifier->verifyIdToken($idToken);
+```
+
+### Option 2: Create your own implementation
+
+If you need custom functionality or want to integrate with specific systems, you can create your own implementation based on the principles in this library:
+
+1. Fetch the JWKS (JSON Web Key Set) from Cognito
+2. Parse and verify the JWT signature using the appropriate JWK
+3. Validate token claims (expiration, issuer, audience, etc.)
+
+This approach gives you more control but requires deeper understanding of JWT verification.
+
 ## Basic Usage
 
 ```php
@@ -108,19 +138,21 @@ class YourCacheImplementation implements CacheInterface
 
 ## Laravel Integration
 
-If you're using Laravel, you can create a wrapper for the Laravel Cache:
+For Laravel users, a ready-to-use cache implementation is included with the library:
 
 ```php
-namespace App\Services;
+<?php
+
+namespace GDSSO\Tokens;
 
 use GDSSO\Tokens\CacheInterface;
 use Illuminate\Support\Facades\Cache;
 
-class LaravelCacheAdapter implements CacheInterface
+class LaravelCache implements CacheInterface
 {
     public function put(string $key, $value, int $minutes)
     {
-        Cache::put($key, $value, $minutes * 60);
+        Cache::put($key, $value, $minutes);
     }
 
     public function get(string $key)
@@ -135,6 +167,21 @@ class LaravelCacheAdapter implements CacheInterface
 }
 ```
 
+Usage with Laravel:
+
+```php
+use GDSSO\Tokens\CognitoTokenVerifier;
+use GDSSO\Tokens\LaravelCache;
+
+// Initialize the verifier with Laravel cache
+$verifier = new CognitoTokenVerifier(
+    config('cognito.region'),
+    config('cognito.user_pool_id'),
+    config('cognito.client_id'),
+    new LaravelCache()
+);
+```
+
 ## Error Handling
 
 The library throws `CognitoTokenException` with specific error codes:
@@ -147,6 +194,7 @@ The library throws `CognitoTokenException` with specific error codes:
 | NO_JWK_FOR_KID | No matching JWK found for the specified kid |
 | SIGNATURE_VERIFICATION_FAILED | JWT signature verification failed |
 | TOKEN_PAYLOAD_DECODING_FAILED | Failed to decode JWT payload |
+| INVALID_TOKEN | Invalid token |
 | INVALID_ISSUER | Invalid issuer in token |
 | TOKEN_EXPIRED | Token is expired |
 | INVALID_AUDIENCE | Invalid audience in ID token |

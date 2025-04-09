@@ -6,8 +6,14 @@
   "license": "MIT",
   "authors": [
     {
-      "name": "Ishantoz",
+      "name": "ishantoz",
       "email": "ishanto412@gmail.com"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/your-username/your-repository"
     }
   ],
   "require": {

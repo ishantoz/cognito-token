@@ -2,6 +2,7 @@
 
 namespace GDSSO\Tokens;
 
+use Exception;
 use GDSSO\Tokens\Exception\CognitoTokenException;
 use GDSSO\Tokens\CacheInterface;
 use GDSSO\Tokens\NoCache;
@@ -109,47 +110,69 @@ class CognitoTokenVerifier
      *
      * @param string $jwt The JWT string.
      * @return array Decoded token payload.
+     * @return array|false Decoded token payload or false on failure.
      * @throws CognitoTokenException if verification fails.
      */
-    protected function verifyToken(string $jwt): array
+    protected function verifyToken(string $jwt)
     {
-        $jws = $this->serializer->unserialize($jwt);
-        $header = $jws->getSignature(0)->getProtectedHeader();
-        $kid = $header['kid'] ?? null;
-        if (!$kid) {
-            throw new CognitoTokenException("No 'kid' found in JWT header.", CognitoTokenException::NO_KID_IN_TOKEN);
+        try {
+            // Attempt to unserialize and verify the token
+            $jws = $this->serializer->unserialize($jwt);
+            $header = $jws->getSignature(0)->getProtectedHeader();
+            $kid = $header['kid'] ?? null;
+
+            if (!$kid) {
+                throw new CognitoTokenException("No 'kid' found in JWT header.", CognitoTokenException::NO_KID_IN_TOKEN);
+            }
+
+            $jwkData = $this->findKeyByKid($kid);
+            if (!$jwkData) {
+                throw new CognitoTokenException("No matching JWK found for kid: $kid", CognitoTokenException::NO_JWK_FOR_KID);
+            }
+            $jwk = new JWK($jwkData);
+
+            $isValid = $this->jwsVerifier->verifyWithKey($jws, $jwk, 0);
+            if (!$isValid) {
+                throw new CognitoTokenException("JWT signature verification failed.", CognitoTokenException::SIGNATURE_VERIFICATION_FAILED);
+            }
+
+            $payload = json_decode($jws->getPayload(), true);
+            if (!$payload) {
+                throw new CognitoTokenException("Failed to decode JWT payload.", CognitoTokenException::TOKEN_PAYLOAD_DECODING_FAILED);
+            }
+
+            // Verify issuer.
+            if (!isset($payload['iss']) || $payload['iss'] !== $this->issuer) {
+                throw new CognitoTokenException("Invalid issuer in token.", CognitoTokenException::INVALID_ISSUER);
+            }
+
+            $currentTimestamp = $this->getTimeStamp();
+
+            // Verify token expiration.
+            if (isset($payload['exp']) && $currentTimestamp > $payload['exp']) {
+                throw new CognitoTokenException("Token is expired.", CognitoTokenException::TOKEN_EXPIRED);
+            }
+
+            return $payload; // Return the payload if everything is valid
+        } catch (Exception $e) {
+            if ($e instanceof CognitoTokenException) {
+                throw $e;
+            } else {
+                throw new CognitoTokenException("Invalid token.", CognitoTokenException::INVALID_TOKEN);
+            }
         }
+    }
 
-        $jwkData = $this->findKeyByKid($kid);
-        if (!$jwkData) {
-            throw new CognitoTokenException("No matching JWK found for kid: $kid", CognitoTokenException::NO_JWK_FOR_KID);
-        }
-        $jwk = new JWK($jwkData);
-
-        $isValid = $this->jwsVerifier->verifyWithKey($jws, $jwk, 0);
-        if (!$isValid) {
-            throw new CognitoTokenException("JWT signature verification failed.", CognitoTokenException::SIGNATURE_VERIFICATION_FAILED);
-        }
-
-        $payload = json_decode($jws->getPayload(), true);
-        if (!$payload) {
-            throw new CognitoTokenException("Failed to decode JWT payload.", CognitoTokenException::TOKEN_PAYLOAD_DECODING_FAILED);
-        }
-
-        // Verify issuer.
-        if (!isset($payload['iss']) || $payload['iss'] !== $this->issuer) {
-            throw new CognitoTokenException("Invalid issuer in token.", CognitoTokenException::INVALID_ISSUER);
-        }
-
-        $currentTimestamp = $this->getTimeStamp();
-        $tokenExpiration = $payload['exp'];
-
-        // Verify token expiration.
-        if (isset($payload['exp']) && $currentTimestamp > $payload['exp']) {
-            throw new CognitoTokenException("Token is expired.", CognitoTokenException::TOKEN_EXPIRED);
-        }
-
-        return $payload;
+    /**
+     * Optionally log errors for debugging or monitoring purposes.
+     *
+     * @param string $message The error message.
+     * @param int $code The error code.
+     */
+    protected function logError(string $message, int $code): void
+    {
+        // Log error to file or monitoring system
+        error_log("Error: $message, Code: $code");
     }
 
     /**
